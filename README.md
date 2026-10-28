@@ -39,24 +39,51 @@ customers, take policy-based actions, and escalate cases with context.
 ## Architecture
 
 ```mermaid
-flowchart LR
-    Customer[Customer or Telegram] --> Chat[Streamlit chat]
-    Chat --> API[FastAPI service]
-    Telegram[Telegram bot] --> API
-    API --> Flow[Agent orchestrator]
-    Flow --> Agents[Intent, context, knowledge, troubleshooting]
-    Agents --> Tools[Read, policy, and action tools]
-    Tools --> DB[(SQLite)]
-    Flow --> LLM[Gemini client]
-    LLM -. demo mode .-> Cache[(Response cache)]
-    Agents --> KB[Knowledge base]
-    KB --> Articles[Markdown articles]
-    API --> Dashboard[Supervisor dashboard]
+flowchart TB
+    Customer["Customer"] --> Streamlit["Streamlit Chat UI"]
+    Customer2["Telegram Customer"] --> Telegram["Telegram Bot"]
+
+    Streamlit --> API["FastAPI Backend"]
+    Telegram --> API
+
+    API --> Orch["Multi-Agent Orchestrator"]
+
+    Orch --> Intent["Intent Agent"]
+    Orch --> Context["Context Agent"]
+    Orch --> Knowledge["Knowledge Agent"]
+    Orch --> Troubleshooting["Troubleshooting Agent"]
+    Orch --> Escalation["Escalation Agent"]
+    Orch --> Action["Action Agent"]
+    Orch --> Ticket["Ticket Agent"]
+    Orch --> Tracking["Tracking Agent"]
+    Orch --> Memory["Memory Agent"]
+    Orch --> CSAT["CSAT Agent"]
+
+    Intent --> Tools["Action / Read / Policy Tools"]
+    Knowledge --> KB["Knowledge Retrieval"]
+    Troubleshooting --> KB
+    Action --> Tools
+
+    KB --> Articles["Markdown Knowledge Articles"]
+    KB --> Vector["Local JSON / Vector Backend"]
+
+    Tools --> DB[("Database")]
+
+    Orch --> LLM["Gemini LLM Client"]
+    LLM --> Cache["Demo Response Cache"]
+
+    API --> Dashboard["Supervisor Dashboard"]
+    Dashboard --> Analytics["Root Cause Analytics"]
+    
+    Evals["Evaluation Framework"] --> Orch
+    Tests["Automated Tests"] --> API
 ```
 
-The orchestrator uses LangGraph when available and includes a manual state-machine
-fallback. Gemini integration is kept behind `llm/client.py`; the knowledge layer
-can use ChromaDB or its local JSON index.
+ResolveAI uses a multi-agent orchestration architecture for customer support automation. Specialized agents handle intent detection, contextual understanding, knowledge retrieval, troubleshooting, escalation, actions, ticket management, tracking, memory, and customer satisfaction.
+
+The system integrates Gemini through a centralized LLM client, supports knowledge retrieval from Markdown articles using a local vector backend, and provides customer interfaces through Streamlit and Telegram. FastAPI exposes backend services, while the supervisor dashboard provides operational insights and root-cause analytics.
+```
+
 
 ## Quick start
 

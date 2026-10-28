@@ -2,6 +2,7 @@
 venv/
 env/
 .env
+.streamlit
 __pycache__/
 *.py[cod]
 data/support.db
