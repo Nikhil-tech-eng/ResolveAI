@@ -1,0 +1,45 @@
+-----Regular Steps-----
+#1. Backend Terminal 1
+cd C:\Users\nikhi\OneDrive\Desktop\2026-2027\AAI\Mini Project\ResolveAI
+.venv\Scripts\activate
+set HF_HUB_OFFLINE=1
+py -m uvicorn api.main:app --host 127.0.0.1 --port 8000
+
+
+#2. Frontend Terminal 2
+cd C:\Users\nikhi\OneDrive\Desktop\2026-2027\AAI\Mini Project\ResolveAI
+.venv\Scripts\activate
+py -m streamlit run ui/chat_app.py
+
+-----First time-----
+#1. Create Virtual Environment
+cd C:\Users\nikhi\OneDrive\Desktop\2026-2027\AAI\Mini Project\ResolveAI
+py -3.12 -m venv .venv
+.venv\Scripts\activate
+
+
+#2. Install dependency
+cd C:\Users\nikhi\OneDrive\Desktop\2026-2027\AAI\Mini Project\ResolveAI
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+
+#3. Then follow regular steps......
+
+---------------------------------------------------------------------------
+###To demonstrate do these:-
+
+Try these in order:
+Order tracking: “Where is my order?” (the agent looks up the order and shows its status)
+Refund or return: “I want to return my order” (it checks the return policy)
+Payment problem: “Money was deducted but my payment failed” (it finds the answer in the knowledge base)
+Account issue: “My account is locked” or “I forgot my password”
+Escalation: “This is fraud, I want a human now” (it hIn ui/chat_app.py, the Agent Trace panel used to show all agent steps (intent, context, knowledge, troubleshooting, action, ticket, escalation, etc.) with the time in ms for each. After my UI changes, it shows only one step. Please restore it.
+
+1. Find where the trace is rendered and check the git diff or history to see what changed. Do not change backend or API logic.
+2. Loop over the full trace list from the /chat response and show every step as its own row: step name on the left, time in ms on the right, with a short summary underneath.
+3. Do not overwrite the trace with only the last message. Keep the trace of the most recent customer question, and do not replace it when a rating or system message arrives.
+4. Show the total time at the bottom.
+5. If the trace is long, make the panel scrollable instead of cutting it.
+
+Tell me which line caused the missing steps.ands the case to a human agent)
+Dashboard: open the dashboard page to show tickets, satisfaction scores and root-cause analytics

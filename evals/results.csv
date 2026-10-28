@@ -1,0 +1,3 @@
+system,conversations,intent_accuracy,correct_decision_rate,auto_resolution_rate,correct_escalation_rate,tool_call_success_rate,avg_turns_to_resolution,avg_latency_seconds,final_action_accuracy
+Agentic ResolveAI,40,1.0,0.925,0.775,1.0,0.9375,1.325,0.09231698000003234,0.925
+Baseline RAG,40,,,,,,1.0,1.0837500030902448e-05,

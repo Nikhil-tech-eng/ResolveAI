@@ -1,0 +1,10 @@
+.venv/
+venv/
+env/
+.env
+__pycache__/
+*.py[cod]
+data/support.db
+data/telegram_links.json
+chroma_db/
+data/chroma/

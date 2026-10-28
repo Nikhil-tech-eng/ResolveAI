@@ -1,0 +1,381 @@
+{
+  "info": {
+    "name": "ResolveAI API",
+    "description": "Smoke checks for chat workflows and support API endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "C001 - Wrong item",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customer_id\": \"C001\",\n  \"message\": \"I got the wrong item\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/chat"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('includes a reply and no ticket', function () {",
+              "  pm.expect(body.reply).to.be.a('string').and.not.empty;",
+              "  pm.expect(body.ticket === null || body.ticket === undefined).to.eql(true);",
+              "});",
+              "pm.collectionVariables.set('csat_conversation_id', body.conversation_id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "C002 - Payment failure",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customer_id\": \"C002\",\n  \"message\": \"my payment failed but money was deducted\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/chat"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('returns a conversation ID and requests the missing order', function () {",
+              "  pm.expect(body.conversation_id).to.be.a('string').and.not.empty;",
+              "  pm.expect(body.reply.toLowerCase()).to.include('order');",
+              "});",
+              "pm.collectionVariables.set('c002_conversation_id', body.conversation_id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "C002 - Provide order ID and verify refund",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"conversation_id\": \"{{c002_conversation_id}}\",\n  \"customer_id\": \"C002\",\n  \"message\": \"ORD10002\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/chat"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "const actionTrace = (body.trace || []).find((entry) => entry.agent === 'action');",
+              "pm.test('trace confirms a successful refund action', function () {",
+              "  pm.expect(actionTrace, 'action trace entry').to.exist;",
+              "  pm.expect(actionTrace.output_summary).to.include('initiate_refund');",
+              "  const actions = body.state.actions.actions_executed || [];",
+              "  pm.expect(actions.some((action) => action.tool_name === 'initiate_refund' && action.success)).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "C008 - Angry fraud complaint",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customer_id\": \"C008\",\n  \"message\": \"I am furious about an unauthorized charge I do not recognize.\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/chat"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('returns an escalation ticket', function () {",
+              "  pm.expect(body.ticket).to.be.an('object');",
+              "  pm.expect(body.ticket.ticket_id).to.exist;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "C005 - Shipped order cancellation is blocked",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customer_id\": \"C005\",\n  \"message\": \"cancel ORD10005\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/chat"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200', function () { pm.response.to.have.status(200); });",
+              "const body = pm.response.json();",
+              "pm.test('explains the cancellation policy block', function () {",
+              "  pm.expect(body.state.proposed_action).to.eql('escalate_policy_block');",
+              "  const reply = String(body.reply || '').toLowerCase();",
+              "  pm.expect(/only orders with status|cannot cancel|policy/.test(reply)).to.eql(true);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET - Tickets and select a transitionable ticket",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/tickets"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200 and a ticket list', function () { pm.response.to.have.status(200); pm.expect(pm.response.json()).to.be.an('array'); });",
+              "const tickets = pm.response.json();",
+              "const nextByStatus = { opened: 'assigned', assigned: 'pending_customer', pending_customer: 'assigned', resolved: 'opened' };",
+              "const ticket = tickets.find((item) => nextByStatus[item.status]);",
+              "pm.test('contains a ticket with a valid next transition', function () { pm.expect(ticket).to.exist; });",
+              "if (ticket) {",
+              "  pm.collectionVariables.set('ticket_id', String(ticket.id));",
+              "  pm.collectionVariables.set('ticket_next_status', nextByStatus[ticket.status]);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PATCH - Valid ticket status transition",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"{{ticket_next_status}}\",\n  \"actor\": \"postman\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/tickets/{{ticket_id}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('applies the requested valid status', function () { pm.expect(pm.response.json().status).to.eql(pm.collectionVariables.get('ticket_next_status')); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "PATCH - Invalid ticket status",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"not_a_valid_status\",\n  \"actor\": \"postman\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/tickets/{{ticket_id}}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('rejects an invalid status with HTTP 422', function () { pm.response.to.have.status(422); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST - CSAT",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"conversation_id\": \"{{csat_conversation_id}}\",\n  \"rating\": 5,\n  \"comment\": \"Helpful support\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/csat"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200 with the submitted rating', function () { pm.response.to.have.status(200); pm.expect(pm.response.json().rating).to.eql(5); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET - Metrics",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/metrics"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200 and dashboard metrics', function () {",
+              "  pm.response.to.have.status(200);",
+              "  const body = pm.response.json();",
+              "  pm.expect(body.open_tickets).to.be.a('number');",
+              "  pm.expect(body.intent_distribution).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET - Alerts",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/alerts"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('returns HTTP 200 with an alert list', function () { pm.response.to.have.status(200); pm.expect(pm.response.json()).to.be.an('array'); });"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "c002_conversation_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "csat_conversation_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ticket_id",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ticket_next_status",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

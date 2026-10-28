@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+langgraph
+google-genai
+chromadb
+sentence-transformers
+streamlit
+pytest
+python-dotenv
+pandas
+plotly
+matplotlib
+requests
+python-telegram-bot

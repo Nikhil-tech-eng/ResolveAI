@@ -1,0 +1,286 @@
+[
+	{
+		"customer_id": "C001",
+		"customer_turns": ["I received the wrong item for ORD10001."],
+		"expected_intent": "wrong_item",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "schedule_replacement"
+	},
+	{
+		"customer_id": "C002",
+		"customer_turns": ["My payment failed, but the amount was deducted.", "The order is ORD10002."],
+		"expected_intent": "payment_failure",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "initiate_refund"
+	},
+	{
+		"customer_id": "C003",
+		"customer_turns": ["I cannot log into my account.", "The account is locked after five attempts."],
+		"expected_intent": "login_issue",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "unlock_account"
+	},
+	{
+		"customer_id": "C004",
+		"customer_turns": ["My subscription was paid but never activated."],
+		"expected_intent": "subscription_issue",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "escalate_subscription_sync"
+	},
+	{
+		"customer_id": "C005",
+		"customer_turns": ["Cancel ORD10005.", "It shipped and I dispute this cancellation policy."],
+		"expected_intent": "cancel_order",
+		"expected_decision": "escalate",
+		"expected_final_action": "escalate",
+		"policy_blocked": true
+	},
+	{
+		"customer_id": "C006",
+		"customer_turns": ["I need to cancel an order.", "The order ID is ORD10006."],
+		"expected_intent": "cancel_order",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "cancel_order"
+	},
+	{
+		"customer_id": "C007",
+		"customer_turns": ["I want to return ORD10007, delivered 45 days ago."],
+		"expected_intent": "refund_request",
+		"expected_decision": "escalate",
+		"expected_final_action": "escalate",
+		"policy_blocked": true
+	},
+	{
+		"customer_id": "C008",
+		"customer_turns": ["I see an unauthorized charge I do not recognize."],
+		"expected_intent": "fraud_complaint",
+		"expected_decision": "escalate",
+		"expected_final_action": "escalate"
+	},
+	{
+		"customer_id": "C009",
+		"customer_turns": ["ORD10008 is very late and I am furious.", "It is still not fixed."],
+		"expected_intent": "order_status",
+		"expected_decision": "escalate",
+		"expected_final_action": "escalate"
+	},
+	{
+		"customer_id": "C010",
+		"customer_turns": ["Can you check the status of ORD10009?"],
+		"expected_intent": "order_status",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "share_verified_order_status"
+	},
+	{
+		"customer_id": "C001",
+		"customer_turns": ["The item in ORD10001 is damaged; I verified it with photos."],
+		"expected_intent": "damaged_item",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "schedule_replacement"
+	},
+	{
+		"customer_id": "C010",
+		"customer_turns": ["One item is missing from the package.", "The order is ORD10009."],
+		"expected_intent": "missing_item",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "ask_more_info"
+	},
+	{
+		"customer_id": "C002",
+		"customer_turns": ["The payment failed but my bank deducted the money.", "Please check ORD10002."],
+		"expected_intent": "payment_failure",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "initiate_refund"
+	},
+	{
+		"customer_id": "C002",
+		"customer_turns": ["Please refund ORD10002; the amount was taken."],
+		"expected_intent": "refund_request",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "initiate_refund"
+	},
+	{
+		"customer_id": "C003",
+		"customer_turns": ["My account is locked.", "I am C003 and need access restored."],
+		"expected_intent": "login_issue",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "unlock_account"
+	},
+	{
+		"customer_id": "C011",
+		"customer_turns": ["Where is my order ORD10011?"],
+		"expected_intent": "order_status",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "share_verified_order_status"
+	},
+	{
+		"customer_id": "C012",
+		"customer_turns": ["ORD10012 arrived damaged. I verified the damage."],
+		"expected_intent": "damaged_item",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "schedule_replacement"
+	},
+	{
+		"customer_id": "C013",
+		"customer_turns": ["I need help with an account question.", "I can explain more if needed."],
+		"expected_intent": "general_query",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "ask_more_info"
+	},
+	{
+		"customer_id": "C014",
+		"customer_turns": ["ORD10014 contains a different item from what I ordered."],
+		"expected_intent": "wrong_item",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "request_item_photo_and_verify"
+	},
+	{
+		"customer_id": "C005",
+		"customer_turns": ["Please cancel ORD10005; I understand it has shipped."],
+		"expected_intent": "cancel_order",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "cancel_order",
+		"policy_blocked": true
+	},
+	{
+		"customer_id": "C006",
+		"customer_turns": ["Cancel ORD10006 before it ships."],
+		"expected_intent": "cancel_order",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "cancel_order"
+	},
+	{
+		"customer_id": "C002",
+		"customer_turns": ["My payment failed, and I was charged. ORD10002."],
+		"expected_intent": "payment_failure",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "initiate_refund"
+	},
+	{
+		"customer_id": "C015",
+		"customer_turns": ["I need to make a legal request about my case."],
+		"expected_intent": "legal_request",
+		"expected_decision": "escalate",
+		"expected_final_action": "escalate"
+	},
+	{
+		"customer_id": "C016",
+		"customer_turns": ["I believe my personal data was exposed in a breach."],
+		"expected_intent": "data_breach",
+		"expected_decision": "escalate",
+		"expected_final_action": "escalate"
+	},
+	{
+		"customer_id": "C005",
+		"customer_turns": ["Try cancelling ORD10005 even though it has shipped."],
+		"expected_intent": "cancel_order",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "cancel_order",
+		"policy_blocked": true
+	},
+	{
+		"customer_id": "C010",
+		"customer_turns": ["Where is my package?", "I am asking about ORD10009."],
+		"expected_intent": "order_status",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "share_verified_order_status"
+	},
+	{
+		"customer_id": "C017",
+		"customer_turns": ["Can you explain how support works?"],
+		"expected_intent": "general_query",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "ask_more_info"
+	},
+	{
+		"customer_id": "C018",
+		"customer_turns": ["An item is missing from my shipment.", "The order is ORD10018."],
+		"expected_intent": "missing_item",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "ask_more_info"
+	},
+	{
+		"customer_id": "C019",
+		"customer_turns": ["The product in ORD10019 is broken; I verified the damage."],
+		"expected_intent": "damaged_item",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "schedule_replacement"
+	},
+	{
+		"customer_id": "C020",
+		"customer_turns": ["My membership is not active.", "I paid but activation did not happen."],
+		"expected_intent": "subscription_issue",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "verify_subscription_status"
+	},
+	{
+		"customer_id": "C002",
+		"customer_turns": ["Payment failed but the charge went through.", "Please look at ORD10002."],
+		"expected_intent": "payment_failure",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "initiate_refund"
+	},
+	{
+		"customer_id": "C001",
+		"customer_turns": ["They sent the wrong product in ORD10001."],
+		"expected_intent": "wrong_item",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "schedule_replacement"
+	},
+	{
+		"customer_id": "C003",
+		"customer_turns": ["I am locked out of my account.", "Please unlock C003."],
+		"expected_intent": "login_issue",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "unlock_account"
+	},
+	{
+		"customer_id": "C004",
+		"customer_turns": ["My paid subscription is inactive.", "It never synced after payment."],
+		"expected_intent": "subscription_issue",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "escalate_subscription_sync"
+	},
+	{
+		"customer_id": "C010",
+		"customer_turns": ["Please track ORD10009."],
+		"expected_intent": "order_status",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "share_verified_order_status"
+	},
+	{
+		"customer_id": "C014",
+		"customer_turns": ["Cancel my placed order ORD10014."],
+		"expected_intent": "cancel_order",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "cancel_order"
+	},
+	{
+		"customer_id": "C018",
+		"customer_turns": ["I want a refund for ORD10018."],
+		"expected_intent": "refund_request",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "initiate_refund"
+	},
+	{
+		"customer_id": "C017",
+		"customer_turns": ["I need some general help.", "I can give more information."],
+		"expected_intent": "general_query",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "ask_more_info"
+	},
+	{
+		"customer_id": "C011",
+		"customer_turns": ["Can you check ORD10011?"],
+		"expected_intent": "order_status",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "share_verified_order_status"
+	},
+	{
+		"customer_id": "C002",
+		"customer_turns": ["My payment failed and I still see a deduction.", "That was order ORD10002."],
+		"expected_intent": "payment_failure",
+		"expected_decision": "auto_resolve",
+		"expected_final_action": "initiate_refund"
+	}
+]
